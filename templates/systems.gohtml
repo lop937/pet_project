@@ -1,0 +1,44 @@
+{{define "systems"}}
+    {{template "header" . }}
+
+<div class="flex justify-end mt-2 mb-2">
+    <a href="/export/systems?project_id={{.projectID}}" class="{{template "btn_style"}} !w-auto px-4">
+        <span class="{{template "btn_text_style"}}">Выгрузить в Excel</span>
+    </a>
+</div>
+
+    <div class="gap-4 mb-4">
+        <a href="/systems/0?project_id={{.projectID}}" class="{{template "btn_style"}}">
+            <div class="flex items-center justify-center">
+                <div class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10">
+                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+                    </svg>
+                </div>
+                <span class="ml-1 {{template "btn_text_style"}}">Добавить систему</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="flex flex-col gap-3">
+        {{range .list}}
+            <a href="/systems/{{.ID}}" class="block w-full bg-white rounded-xl p-3 shadow-sm border border-slate-200 hover:border-emerald-500 transition-colors">
+                <div class="flex justify-between items-center">
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-400">#{{.ID}}</span>
+                        <span class="text-base font-medium text-gray-900">
+                            {{range .Columns}}{{.Val}} {{end}}
+                        </span>
+                    </div>
+                    <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </a>
+        {{else}}
+            <div class="text-center text-slate-400 py-8">систем пока нет</div>
+        {{end}}
+    </div>
+
+    {{template "footer" . }}
+{{end}}

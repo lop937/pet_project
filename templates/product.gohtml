@@ -1,0 +1,61 @@
+{{define "products"}}
+    {{template "header" . }}
+
+{{/*    <div class="flex items-center justify-between gap-4 mb-4">*/}}
+    <div class="gap-4 mb-4">
+        {{template "button_add" (Args "page" .route "id" 0) }}
+        {{template "search" "products" }}
+    </div>
+
+    <div class="flex flex-col gap-3" id="search-results"></div>
+
+    {{template "footer" . }}
+{{end}}
+
+{{define "product"}}
+    <div class="w-full bg-white rounded-xl p-2 shadow-sm transition-colors border border-slate-200">
+        <div class="flex justify-between items-start mb-2">
+            <div>
+                <span class="text-xs text-gray-400">#{{.ID}}</span>
+                <h3 class="text-lg text-gray-900 leading-tight">{{.Name}}</h3>
+            </div>
+            <span class="px-2 py-1 text-blue-600 text-xs font-medium rounded-md uppercase">
+                {{.Tag}}
+            </span>
+        </div>
+        <div class="flex justify-between items-end mt-4">
+            <div class="text-gray-500">
+                {{.Attr}}
+            </div>
+            <div class="text-right">
+                <p class="text-xl text-grey-500">
+                    {{.Price}} <span class="text-sm font-normal text-gray-500">RUB</span>
+                </p>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{define "search_result_products"}}
+    {{ range $product := .items }}
+        <a href="/products/{{.ID}}">
+            {{template "product" $product }}
+        </a>
+    {{ else }}
+        <div class="p-8 text-center text-gray-400">
+            <p>ничего пока нет</p>
+        </div>
+    {{end}}
+{{end}}
+
+{{define "search_result_work"}}
+    {{ range $product := .items }}
+        <a href="/work/0?product={{.ID}}" class="">
+            {{template "product" $product }}
+        </a>
+    {{ else }}
+        <div class="p-8 text-center text-gray-400">
+            <p>ничего пока нет</p>
+        </div>
+    {{end}}
+{{end}}

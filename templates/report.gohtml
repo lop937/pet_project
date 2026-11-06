@@ -1,0 +1,35 @@
+{{define "report"}}
+    {{template "header" . }}
+    {{template "day_report" .data }}
+    {{template "footer" . }}
+{{end}}
+
+{{define "day_report"}}
+    <div class="">
+        <div class="grid grid-cols-2 gap-2">
+
+            <!-- Главная карточка: Сумма -->
+            <div class="col-span-2 px-3 py-1.5 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Выручка за сегодня</span>
+                </div>
+                <!-- Делим на 100, если храним в копейках -->
+                <span class="text-slate-900">{{ .Amount }} ₽</span>
+            </div>
+
+            <!-- Операции -->
+            <div class="px-3 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                <span class="text-[10px] text-slate-400 uppercase">Работ</span>
+                <span class="text-sm text-slate-700">{{ .TotalWorks }}</span>
+            </div>
+
+            <!-- Объем -->
+            <div class="px-3 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                <span class="text-[10px] text-slate-400 uppercase">Объем</span>
+                <span class="text-sm text-slate-700">{{ printf "%.1f" .TotalQuantity }}</span>
+            </div>
+
+        </div>
+    </div>
+{{end}}

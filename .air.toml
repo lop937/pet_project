@@ -1,0 +1,16 @@
+[build]
+    cmd = "go build -o ./tmp/main cmd/main.go"
+  bin = "./tmp/main"
+  full_bin = "./tmp/main"
+  # Добавьте gohtml и html в список расширений для отслеживания
+  include_ext=["go", "gohtml", "css", "js"]
+
+  # Убедитесь, что папки с шаблонами и статикой НЕ находятся в исключениях
+  exclude_dir=["tmp", "vendor", "bin", "mobile", "ios"]
+
+  # Если вы используете embed, air должен ПЕРЕсобирать бинарник 
+  # при изменении шаблонов, так как они вшиваются внутрь.
+  # Для этого убедитесь, что расширение gohtml есть в include_ext выше.
+
+[screen]
+  clear_on_rebuild=true

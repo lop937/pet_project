@@ -1,0 +1,122 @@
+{{define "table"}}
+    {{template "header" . }}
+
+    {{if eq .route "works"}}
+        {{template "day_report" .day_report }}
+    {{else}}
+        {{template "button_add" (Args "page" .route "id" 0) }}
+    {{end}}
+
+    {{if eq .route "works"}}
+    <div class="flex flex-col gap-2 mt-2 mb-2">
+        <!-- Фильтр по датам -->
+        <div class="flex gap-2 items-center">
+            <input type="date" id="filter_from" class="p-2 border border-slate-300 rounded-lg text-sm bg-white" title="С даты">
+            <input type="date" id="filter_to" class="p-2 border border-slate-300 rounded-lg text-sm bg-white" title="По дату">
+            <button onclick="filterByDate()" class="px-3 py-2 bg-slate-200 rounded-lg text-sm font-bold">Фильтр</button>
+            <button onclick="resetFilter()" class="px-3 py-2 bg-slate-100 rounded-lg text-sm text-slate-600">Сброс</button>
+        </div>
+
+        <!-- Кнопка выгрузки выбранных -->
+        <div class="flex justify-end">
+            <button onclick="submitSelected()" class="flex items-center justify-center h-10 px-4 bg-emerald-500 text-white rounded-xl font-bold text-sm shadow-sm transition-all active:scale-[0.98] active:bg-emerald-600">
+                Выгрузить смету по выбранным
+            </button>
+        </div>
+    </div>
+    {{end}}
+
+    <div class="flex-1 overflow-x-auto border-t border-slate-200 mt-3">
+        <table class="min-w-full border-separate border-spacing-0 table-fixed">
+            <thead class="bg-slate-50 sticky top-0 z-10 shadow-sm shadow-slate-200/50">
+            <tr>
+                {{ range $index, $title := .titles }}
+                    <th class="px-3 py-3 border-b border-slate-200 text-left">
+                        <span class="text-[10px] font-black uppercase text-slate-400">
+                            {{$title}}
+                        </span>
+                    </th>
+                {{end}}
+            </tr>
+            </thead>
+            <tbody class="bg-white">
+            {{ $route := .route }}
+            {{ range $item := .list }}
+                <!-- data-date нужен для фильтрации -->
+                <tr id="{{ $item.ID}}" data-date="{{ (index $item.Columns 1).Val }}" class="active:bg-slate-50/80 transition-colors duration-150">
+                    {{ range $index, $field := $item.Columns }}
+                        <td class="px-3 py-4 border-b border-slate-50 align-top {{if eq $field.Type "date"}}max-w-40{{end}} {{if eq $field.Type "text"}}min-w-40{{end}} {{if eq $field.Type "number"}}min-w-20{{end}}">
+                            {{if eq $field.Type "checkbox"}}
+                                <!-- Чекбокс -->
+                                <input type="checkbox" class="work-checkbox w-5 h-5 accent-emerald-500 rounded border-slate-300" value="{{$field.Val}}">
+                            {{else}}
+                                <!-- Данные -->
+                                <a href="/{{$route}}/{{$item.ID}}" class="block touch-manipulation">
+                                    {{if eq $field.Type "date"}}
+                                        <span class="whitespace-nowrap inline-block text-[11px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded uppercase">
+                                            {{$field.Val}}
+                                        </span>
+                                    {{else}}
+                                        <span class="text-[14px] font-medium text-slate-800 {{if $field.Disable}}text-slate-300{{end}}">
+                                            {{$field.Val}}
+                                        </span>
+                                    {{end}}
+                                </a>
+                            {{end}}
+                        </td>
+                    {{end}}
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Скрипт фильтрации и отправки -->
+    {{if eq .route "works"}}
+    <script>
+        function filterByDate() {
+            const from = document.getElementById('filter_from').value;
+            const to = document.getElementById('filter_to').value;
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const dateStr = row.getAttribute('data-date');
+                if (!dateStr) return;
+                
+                let show = true;
+                if (from && dateStr < from) show = false;
+                if (to && dateStr > to) show = false;
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        function resetFilter() {
+            document.getElementById('filter_from').value = '';
+            document.getElementById('filter_to').value = '';
+            document.querySelectorAll('tbody tr').forEach(row => row.style.display = '');
+        }
+
+                     function submitSelected() {
+            const checkboxes = document.querySelectorAll('.work-checkbox:checked');
+            const ids = Array.from(checkboxes).map(cb => cb.value);
+
+            if (ids.length === 0) {
+                alert('Пожалуйста, выберите хотя бы одну работу.');
+                return;
+            }
+
+            // Формируем GET-ссылку и переходим по ней (WebView это перехватит и скачает)
+            window.location.href = '/export/smeta-selected?ids=' + ids.join(',');
+        }
+
+    </script>
+    {{end}}
+
+    <!-- Скрытая форма для отправки выбранных ID -->
+    <form id="exportForm" method="POST" action="/export/smeta-selected" target="_blank" style="display: none;">
+        <input type="hidden" name="ids" id="exportIds" value="">
+    </form>
+
+    {{template "footer"}}
+{{end}}

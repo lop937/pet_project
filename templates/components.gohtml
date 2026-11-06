@@ -1,0 +1,113 @@
+{{define "label_style"}}
+    pl-2 mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400
+{{end}}
+
+{{define "input_style"}}
+    w-full h-12 px-4 bg-white block rounded-xl border border-slate-200
+    text-sm font-medium text-slate-900 shadow-sm shadow-slate-200/50
+    placeholder:text-slate-400 focus:outline-none focus:border-emerald-500
+    focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200
+{{end}}
+
+{{define "btn_style"}}
+    w-full h-12 px-4 mb-3 flex items-center justify-center
+    bg-slate-50 border border-slate-200 rounded-2xl shadow-sm
+    transition-all duration-200 active:bg-slate-200/60 active:scale-[0.98]
+{{end}}
+
+{{define "btn_text_style"}}
+    text-[11px] font-bold uppercase tracking-wider text-slate-600
+{{end}}
+
+
+{{define "button_add"}}
+    <a href="/{{.page}}/{{.id}}{{.path}}" class="{{template "btn_style"}}">
+        <!-- Иконка плюса в стиле Emerald (как точка в выручке) -->
+        <div class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10">
+            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+            </svg>
+        </div>
+
+        <span class="ml-1 {{template "btn_text_style"}}">
+            Добавить запись
+        </span>
+    </a>
+{{end}}
+
+{{define "select" }}
+    <div class="">
+        <label for="{{.Name}}_select"
+               class="{{if .Disabled }}text-zinc-400{{else}}text-gray-700{{end}} {{template "label_style"}}">
+            {{.Label}}
+        </label>
+
+        <select id="{{.Name}}_select"
+                name="{{.Name}}" {{if .Disabled }}disabled{{end}}
+                class="{{template "input_style"}} {{if .Disabled }}text-zinc-400{{else}}text-gray-700{{end}}">
+
+            {{ range $option := .Options}}
+                <option {{with $option.Selected}}selected{{end}} value="{{$option.Val}}">{{$option.Name}}</option>
+            {{end}}
+        </select>
+    </div>
+{{end}}
+
+
+{{define "input" }}
+    <div class="">
+        <label for="{{.Name}}_input" class="...">
+            {{.Label}}
+        </label>
+
+        <input id="{{.Name}}_input" type="{{.Type}}" name="{{.Name}}" value="{{.Val}}"
+               class="{{template "input_style"}} {{if .Disabled }}text-zinc-400{{else}}text-gray-700{{end}} {{if eq .Type "number" }}max-w-[80px]{{end}}"
+               placeholder="{{.Val}}" {{if .Disabled }}disabled{{end}} {{if .Hidden }}hidden{{end}} {{.Attrs}}>
+    </div>
+{{end}}
+    
+
+{{define "group"}}
+    {{ $len := len . }}
+    <div class="grid grid-cols-{{$len}} gap-4 mt-6">
+        {{ range . }}
+            <div class="flex flex-col">
+                <label for="{{.Name}}_input" class="{{template "label_style"}}">
+                    {{.Label}}
+                </label>
+
+                <input id="{{.Name}}_input" type="{{.Type}}" name="{{.Name}}" value="{{.Val}}"
+                       class="{{template "input_style"}}"
+                       placeholder="{{.Val}}" {{if .Disabled }}disabled{{end}}>
+            </div>
+        {{end}}
+    </div>
+{{end}}
+
+{{define "search" }}
+    <div class="relative flex items-center my-3 w-full">
+        <!-- Иконка лупы (SVG) -->
+        <div class="absolute left-3 flex items-center pointer-events-none">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+        </div>
+
+        <!-- Поле ввода -->
+        <input class="pl-9 {{template "input_style"}}"
+               type="search"
+               name="search"
+               placeholder="Поиск по каталогу..."
+               hx-get="/search?p={{.}}"
+               hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load"
+               hx-target="#search-results"
+               hx-indicator=".htmx-indicator">
+
+        <!-- Индикатор загрузки HTMX (Emerald) -->
+        <div class="htmx-indicator absolute right-3">
+            <div class="w-4 h-4 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
+        </div>
+    </div>
+{{end}}

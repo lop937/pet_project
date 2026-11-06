@@ -1,0 +1,101 @@
+{{define "project_form"}}
+    {{template "header" . }}
+
+    <br>
+
+    <form id="{{.route}}_table_form" method="post" action="/{{.route}}/{{.id}}" autocomplete="on">
+        {{ range $field := .fields}}
+            <div class="relative my-4">
+                {{ if eq $field.Type "group" }}
+                    {{template "group" $field.Group }}
+                {{ else if eq $field.Type "select" }}
+                    {{template "select" $field }}
+                {{ else }}
+                    {{template "input" $field }}
+                {{end}}
+            </div>
+        {{end}}
+    </form>
+
+    <footer class="flex justify-start gap-2">
+        <div class="px-3 py-6 space-y-3 w-full">
+            <!-- Сохранить -->
+            <button form="{{.route}}_table_form" type="submit"
+                    class="flex items-center justify-center w-full h-12 bg-emerald-500 text-white rounded-2xl font-bold text-sm shadow-sm shadow-emerald-200 transition-all active:scale-[0.98] active:bg-emerald-600">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                </svg>
+                Сохранить и выйти
+            </button>
+
+            <!-- Системы (только для существующего проекта) -->
+            {{if .showSystems}}
+                <a href="{{.systemsURL}}" class="{{template "btn_style"}}">
+                    <div class="flex items-center justify-center">
+                        <svg class="w-3.5 h-3.5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path>
+                        </svg>
+                        <span class="{{template "btn_text_style"}}">Системы</span>
+                    </div>
+                </a>
+            {{end}}
+
+{{if .id}}
+<a href="/export/smeta/{{.id}}" class="flex items-center justify-center w-full h-12 bg-blue-500 text-white rounded-2xl font-bold text-sm shadow-sm shadow-blue-200 transition-all active:scale-[0.98] active:bg-blue-600 my-2">
+    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
+    </svg>
+    Выгрузить смету
+</a>
+{{end}}
+
+{{if .id}}
+    <a href="/export/full_project/{{.id}}" class="{{template "btn_style"}}">
+        <div class="flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
+            </svg>
+            <span class="{{template "btn_text_style"}}">Выгрузить проект</span>
+        </div>
+    </a>
+{{end}}
+
+            <!-- Назад -->
+            <a href="javascript:history.back()" class='{{template "btn_style"}}'>
+                <div class="flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"></path>
+                    </svg>
+                    <span class='{{template "btn_text_style"}}'>Назад</span>
+                </div>
+            </a>
+
+            <!-- Удалить -->
+            {{ if .id}}
+                <form action="/{{.route}}/{{.id}}" id="deleteForm" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class='{{template "btn_style"}} !border-red-100 active:bg-red-50'>
+                        <div class="flex items-center justify-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash text-red-500" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                            </svg>
+                            <span class='{{template "btn_text_style"}} !text-red-600'>Удалить</span>
+                        </div>
+                    </button>
+                </form>
+                <script>
+                    const deleteForm = document.getElementById('deleteForm');
+                    deleteForm.addEventListener('submit', function (event) {
+                        const confirmation = confirm('Вы уверены, что хотите удалить этот элемент? Это действие необратимо.');
+                        if (!confirmation) {
+                            event.preventDefault();
+                        }
+                    });
+                </script>
+            {{end}}
+        </div>
+    </footer>
+
+    {{template "footer"}}
+{{end}}

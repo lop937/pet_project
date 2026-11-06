@@ -1,0 +1,40 @@
+{{define "work"}}
+    {{template "header" . }}
+
+    {{template "day_report" .day_report }}
+    <div class="flex items-center justify-between">
+        {{ $route := "work"}}
+        {{template "search" $route }}
+    </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const qtyInput = document.getElementById('quantity_input');
+        const priceInput = document.getElementById('price_input');
+        const productData = {{.product}}; // Сервер передает данные товара сюда
+
+        // Если товар имеет square (например, 1.55), мы можем вычислить базовую цену
+        // Допустим, в базе цена хранится как за м². 
+        // В вашем GetForm мы уже умножили её, но давайте дадим пользователю понять логику.
+
+        // Функция для пересчета итоговой суммы
+        function updateTotal() {
+            const qty = parseFloat(qtyInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            
+            // Если вы хотите, чтобы цена менялась при изменении кол-ва (например, если square фиксирован)
+            // Это можно сделать, но лучше оставить поле "Цена" редактируемым,
+            // так как в вашем файле Excel цена за ед. фиксирована (например, 450).
+        }
+
+        if (qtyInput && priceInput) {
+            qtyInput.addEventListener('input', updateTotal);
+            priceInput.addEventListener('input', updateTotal);
+        }
+    });
+</script>
+
+    <div class="flex flex-col gap-3" id="search-results"></div>
+
+    {{template "footer" . }}
+{{end}}
